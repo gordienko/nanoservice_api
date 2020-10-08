@@ -156,4 +156,7 @@ POST http://localhost:3000/api/v1/messages
 
 Очереди построены с помощью Sidekiq, для каждого типа мессенджера отдельная очередь. 
 Доступ в веб панель Sidekiq находится по этому адресу http://localhost:3000/sidekiq, также закрыта 
-Basic access authentication. 
+Basic access authentication.
+
+## ERD диаграмма
+ERD диаграмма приложения проста и состоит всего из двух моделей [erd.pdf](erd.pdf).
