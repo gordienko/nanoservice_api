@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateDispatches < ActiveRecord::Migration[6.0]
   def change
     create_table :dispatches do |t|
@@ -9,6 +11,6 @@ class CreateDispatches < ActiveRecord::Migration[6.0]
 
       t.timestamps
     end
-    add_index :dispatches, [:message_id, :phone, :messenger_type], unique: true
+    add_index :dispatches, %i[message_id phone messenger_type], unique: true
   end
 end

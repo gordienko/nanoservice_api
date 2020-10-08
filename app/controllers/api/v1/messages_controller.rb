@@ -10,7 +10,7 @@ module Api
         @message = Message.new(message_params)
         if @message.save
           render json: { messages: 'Message sent for processing', is_success: true,
-                        data: { message: @message } }, status: :ok
+                         data: { message: @message } }, status: :ok
         else
           render json: { messages: @message.errors.messages, is_success: false, data: {} },
                  status: :unprocessable_entity
@@ -21,9 +21,9 @@ module Api
 
       def http_basic_authenticate
         message = { messages: 'Invalid credentials', is_success: false, data: {} }.to_json
-        authenticate_or_request_with_http_basic("Nanoservice", message)do |username, password|
+        authenticate_or_request_with_http_basic('Nanoservice', message) do |username, password|
           username == Rails.application.credentials.dig(:username) &&
-              password == Rails.application.credentials.dig(:password)
+            password == Rails.application.credentials.dig(:password)
         end
       end
 

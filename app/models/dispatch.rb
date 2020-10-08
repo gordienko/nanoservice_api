@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Dispatch < ApplicationRecord
   extend Enumerize
   belongs_to :message
@@ -24,21 +26,18 @@ class Dispatch < ApplicationRecord
   end
 
   def validate_send_at
-    if send_at && send_at <= Time.zone.now
-      errors.add(:send_at, 'must be greater than the current time')
-    end
+    errors.add(:send_at, 'must be greater than the current time') if send_at && send_at <= Time.zone.now
   end
 
   def validate_repeat
     check_message = Message.where(body: message.body).first
-    if check_message and check_message.dispatches.where(messenger_type: messenger_type, phone: phone).count > 0
+    if check_message && check_message.dispatches.where(messenger_type: messenger_type, phone: phone).count.positive?
       errors.add :phone, "a similar message using #{messenger_type} has already been sent to #{phone}"
     end
   end
 
-  # Отправка процесса в очередь задач
   def send_message
-    "Send#{messenger_type.capitalize}MessageJob".constantize.
-        set(wait_until: (send_at? ? send_at : Time.zone.now)).perform_later(self)
+    "Send#{messenger_type.capitalize}MessageJob".constantize
+                                                .set(wait_until: (send_at? ? send_at : Time.zone.now)).perform_later(self)
   end
 end
