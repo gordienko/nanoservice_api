@@ -20,9 +20,10 @@ class Dispatch < ApplicationRecord
   private
 
   def validate_phone
-    if message.dispatches.to_a.select { |a| a[:messenger_type] == messenger_type && a[:phone] == phone }.length > 1
-      errors.add(:phone, 'uniqueness constraint violated')
-    end
+    unless message.dispatches.to_a
+                  .select { |a| a[:messenger_type] == messenger_type && a[:phone] == phone }.length > 1; return; end
+
+    errors.add(:phone, 'uniqueness constraint violated')
   end
 
   def validate_send_at
@@ -31,13 +32,15 @@ class Dispatch < ApplicationRecord
 
   def validate_repeat
     check_message = Message.where(body: message.body).first
-    if check_message && check_message.dispatches.where(messenger_type: messenger_type, phone: phone).count.positive?
-      errors.add :phone, "a similar message using #{messenger_type} has already been sent to #{phone}"
-    end
+    unless check_message && check_message
+           .dispatches.where(messenger_type: messenger_type, phone: phone)
+           .count.positive?; return; end
+
+    errors.add :phone, "a similar message using #{messenger_type} has already been sent to #{phone}"
   end
 
   def send_message
-    "Send#{messenger_type.capitalize}MessageJob".constantize
-                                                .set(wait_until: (send_at? ? send_at : Time.zone.now)).perform_later(self)
+    "Send#{messenger_type.capitalize}MessageJob"
+      .constantize.set(wait_until: (send_at? ? send_at : Time.zone.now)).perform_later(self)
   end
 end

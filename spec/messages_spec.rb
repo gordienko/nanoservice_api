@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-
+include AuthHelper
 messenger_types = Dispatch.messenger_type.values
 
 describe 'sending a message without authentication', type: :request do
