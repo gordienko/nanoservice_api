@@ -8,7 +8,6 @@ instant messaging (Viber, Telegram, What’s App).
 ```
 $ bundle install
 $ gem install foreman
-$ yarn install
 
 $ rake db:create
 $ rake db:migrate
