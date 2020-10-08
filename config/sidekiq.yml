@@ -1,0 +1,12 @@
+development:
+  :concurrency: 100
+  :queues:
+    - nanoservice_api_development_telegram
+    - nanoservice_api_development_viber
+    - nanoservice_api_development_whatsapp
+production:
+  :concurrency: 100
+  :queues:
+    - nanoservice_api_development_telegram
+    - nanoservice_api_development_viber
+    - nanoservice_api_development_whatsapp
