@@ -13,6 +13,6 @@ class Message < ApplicationRecord
   private
 
   def at_least_one_dispatches
-    errors.add :base, 'Must have at least one dispatch' unless dispatches.length > 0
+    errors.add :dispatches, 'Must have at least one dispatch' unless dispatches.length > 0
   end
 end

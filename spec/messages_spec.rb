@@ -84,8 +84,8 @@ describe "sending a scheduled message for the past time", type: :request do
   end
 end
 
-# Отправка сообщения на не велидный (не мобильный) номер телефона
-describe "sending a scheduled message for the past time", type: :request do
+# Отправка сообщения на невелидный (не мобильный) номер телефона
+describe "sending a message to an unimpressive phone", type: :request do
   before do
     post '/api/v1/messages', params: {body: Faker::Lorem.sentence(word_count: 20, supplemental: true),
                                         dispatches_attributes: [
@@ -96,6 +96,38 @@ describe "sending a scheduled message for the past time", type: :request do
     expect(JSON.parse(response.body).dig('messages', 'dispatches.phone').first).to eq('is invalid')
   end
 end
+
+# Отправка сообщения без списка получателей
+describe "sending a message without a recipient list", type: :request do
+  before do
+    post '/api/v1/messages', params: {body: Faker::Lorem.sentence(word_count: 20, supplemental: true)},
+         headers: http_login
+  end
+  it 'returns failure messages' do
+    expect(JSON.parse(response.body).dig('messages', 'dispatches').first).to eq('Must have at least one dispatch')
+  end
+end
+
+
+# Двойная отправка сообщения одному получателю
+describe "sending a message twice to one recipient", type: :request do
+  body = Faker::Lorem.sentence(word_count: 20, supplemental: true)
+  phone = '+79218419858'
+  messenger_type = 'telegram'
+  before do
+    2.times do
+      post '/api/v1/messages', params: {body: body, dispatches_attributes: [
+                                            {phone: phone, messenger_type: messenger_type},
+                                        ]}, headers: http_login
+      end
+  end
+
+  it 'returns a failure message' do
+    expect(JSON.parse(response.body).dig('messages', 'dispatches.phone').first).
+        to eq("a similar message using #{messenger_type} has already been sent to #{phone}")
+  end
+end
+
 
 # Успешная отправка сообщения
 describe "sending a message with authentication", type: :request do
